@@ -121,14 +121,15 @@ fn main() {
     println!("### Taking client locks");
     let host = "localhost";
     let port = match testing {
-        true => "5666",
-        false => "5600"
+        true => 5666,
+        false => 5600
     };
     let _window_lock = singleinstance::get_client_lock(&format!("aw-watcher-window-at-{}-on-{}", host, port)).unwrap();
     let _afk_lock = singleinstance::get_client_lock(&format!("aw-watcher-afk-at-{}-on-{}", host, port)).unwrap();
 
     println!("### Creating aw-client");
-    let client = aw_client_rust::AwClient::new(host, port, "aw-watcher-wayland");
+    let client = aw_client_rust::blocking::AwClient::new(host, port, "aw-watcher-wayland")
+        .expect("Failed to create a client");
     let hostname = gethostname::gethostname().into_string().unwrap();
     let window_bucket = format!("aw-watcher-window_{}", hostname);
     let afk_bucket = format!("aw-watcher-afk_{}", hostname);
